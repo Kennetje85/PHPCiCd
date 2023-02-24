@@ -1,18 +1,9 @@
-pipeline {
+pipeline{
     agent any
-
-    stages {
-        stage('Build') {
-            steps {
-                git 'https://github.com/Kennetje85/PHPCiCd.git'
-                sh 'composer install'
-                sh 'cp .env.example .env'
-                sh 'php artisan key:generate'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh './vendor/bin/phpunit'
+    stages{
+        stage("playbook execute"){
+            steps{
+                ansiblePlaybook credentialsId: 'jenkinsAnsible', disableHostKeyChecking: true, installation: 'Ansible', inventory: '/etc/ansible/hosts', playbook: '/etc/ansible/test.yml'
             }
         }
     }
