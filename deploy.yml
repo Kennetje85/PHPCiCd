@@ -1,0 +1,35 @@
+---
+- hosts: webservers
+  become: yes
+  vars:
+        temp_repo_path: "/repo"
+  tasks:
+
+    # Get the latest code from your GitHub code repository
+    - name: Get latest Application Codebase
+      git:
+        repo: https://github.com/Kennetje85/PHPCiCd.git
+        version: main
+        dest: "{{ temp_repo_path }}"
+        single_branch: no
+        accept_hostkey: true
+        depth: 1
+
+        #     register: code_upload
+
+    - name: Deploy the code.
+      delegate_to: "{{ inventory_hostname }}"
+      synchronize:
+        src: /var/www/html/repo
+        dest: /var/www/html
+        recursive: yes
+        delete: yes
+        # when: code_upload.change
+
+        #  - name: Copy file with owner and permission, using symbolic representation
+        # copy:
+        #src: /var/www/html/repos
+        #dest: /var/www/html
+        #owner: root
+        #group: root
+        #mode: '0644'
